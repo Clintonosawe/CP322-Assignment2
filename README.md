@@ -1,21 +1,20 @@
-ML Regression and Optimization
+# ML Regression and Optimization
 
-A Python-based machine learning project exploring linear regression, logistic regression, feature engineering, and gradient descent optimization. The project focuses on understanding how supervised learning models are built, trained, and evaluated through mathematical implementations and practical experiments.
+This project explores some of the fundamentals of supervised machine learning, with a focus on feature mapping, linear regression, logistic regression, and gradient descent.
 
-Project Overview
+The goal was to get a better understanding of how these models actually work, rather than relying entirely on built-in machine learning libraries. Through a combination of manual implementations and practical experiments, the project looks at how models learn from data, how their parameters are optimized, and how well they perform on new examples.
 
-This project covers three core areas of supervised machine learning:
+## Project Overview
 
-Feature Mapping: Transforming input data into a higher-dimensional feature space to make previously non-linearly separable datasets linearly separable.
+The project is divided into three parts:
 
-Logistic Regression: Building a binary classifier from scratch using sigmoid activation, cross-entropy loss, and batch gradient descent.
+- **Feature Mapping:** Exploring how transforming input features can make a dataset linearly separable.
+- **Logistic Regression:** Implementing a binary classifier from scratch to solve the XOR problem using batch gradient descent.
+- **Linear Regression:** Training and evaluating a regression model while experimenting with learning rates and cross-validation.
 
-Linear Regression: Training and evaluating a regression model using hyperparameter tuning and 10-fold cross-validation.
+## Project Structure
 
-The goal is to better understand the mathematics behind these algorithms and how different modelling and optimization decisions affect their performance.
-
-Project Structure
-
+```text
 ML-Regression-and-Optimization/
 ├── A2Q2_LOG_REG/
 │   ├── log_reg.py
@@ -23,150 +22,85 @@ ML-Regression-and-Optimization/
 ├── regression-dataset/
 ├── Part3_Linear_Regression.ipynb
 └── README.md
+```
 
-1. Feature Mapping
+## 1. Feature Mapping
 
-The first part explores linear separability in binary classification.
+The first part focuses on linear separability and how feature transformations can help with classification.
 
-A one-dimensional dataset may not be linearly separable because a single decision boundary cannot correctly distinguish the classes.
+Some datasets cannot be separated using a single linear decision boundary in their original feature space. By introducing additional features, we can represent the data in a way that makes classification easier.
 
-To address this, a nonlinear feature mapping is applied:
+For this problem, the following feature map was used:
 
-[
-\psi(x)=(x,x^2)
-]
+$$
+\psi(x) = (x, x^2)
+$$
 
-This transforms the original input into a two-dimensional representation, allowing a linear classifier to separate the training examples.
+This transforms a one-dimensional input into a two-dimensional feature vector, allowing a linear classifier to correctly separate the examples.
 
-Key concepts: Linear separability, decision boundaries, feature transformations, and linear classification.
+## 2. Logistic Regression
 
-2. Logistic Regression — XOR Classification
+For the second part, I implemented logistic regression from scratch to classify the XOR dataset.
 
-A logistic regression classifier is implemented from scratch to solve the XOR classification problem.
+XOR is a useful example because its classes cannot be separated by a straight line in the original input space. To address this, I introduced an interaction feature:
 
-The XOR dataset is not linearly separable in its original two-dimensional representation. To overcome this, an interaction feature is introduced:
+$$
+\psi(x_1, x_2) = (x_1, x_2, x_1x_2)
+$$
 
-[
-\psi(x_1,x_2)=(x_1,x_2,x_1x_2)
-]
+The implementation includes:
 
-The model uses the following components:
+- **Linear predictions:** Computing the weighted sum of the input features.
+- **Sigmoid activation:** Converting the model's output into a probability between 0 and 1.
+- **Binary cross-entropy loss:** Measuring how well the predicted probabilities match the actual labels.
+- **Batch gradient descent:** Updating the model's weights using all training examples at each iteration.
 
-Linear model: Calculates the weighted sum of input features.
+Rather than using an existing logistic regression package, I implemented these calculations directly in Python to better understand the training process.
 
-Sigmoid activation: Converts the linear output into a probability between 0 and 1.
+### Results
 
-Binary cross-entropy: Measures the difference between predicted probabilities and actual target values.
+| Metric | Result |
+|---|---|
+| Initial weights | (-0.6, 2.0, 1.2, -2.8) |
+| Learning rate | 0.1 |
+| Training iterations | 25,356 |
+| Final cross-entropy loss | 0.00999966 |
+| Training accuracy | 100% |
 
-Batch gradient descent: Updates model weights using the average gradient across all training examples.
+After training, the model correctly classified all four XOR examples.
 
-The logistic regression algorithm is implemented manually without using a prebuilt machine learning classifier.
+| Input | Actual Class | Predicted Class |
+|---|---|---|
+| (0, 0) | 0 | 0 |
+| (0, 1) | 1 | 1 |
+| (1, 0) | 1 | 1 |
+| (1, 1) | 0 | 0 |
 
-Training Results
+## 3. Linear Regression
 
-Metric
+The final part focuses on training and evaluating a linear regression model using a numerical dataset.
 
-Result
+I used 10-fold cross-validation to compare different learning rates and determine which value produced the lowest average mean squared error (MSE).
 
-Initial weights
+The learning rates were tested from 0.00 to 0.10 in increments of 0.01. After selecting the best value, I evaluated the model on a separate test dataset to see how well it performed on unseen data.
 
-(-0.6, 2.0, 1.2, -2.8)
+### Results
 
-Learning rate
+| Metric | Result |
+|---|---|
+| Cross-validation folds | 10 |
+| Best learning rate | 0.02 |
+| Cross-validation MSE | 1.3438 |
+| Test MSE | 1.4459 |
 
-0.1
+The test MSE was slightly higher than the cross-validation MSE, but the results were reasonably close. This suggests that the model performed similarly on the validation and test data, without a major drop in performance.
 
-Training iterations
+## Technologies Used
 
-25,356
+- **Python** – Model implementation and experimentation
+- **NumPy** – Numerical calculations and array operations
+- **scikit-learn** – Regression and model evaluation
+- **Matplotlib** – Visualizing model performance
+- **Jupyter Notebook** – Running experiments and documenting results
 
-Final cross-entropy loss
-
-0.00999966
-
-Training accuracy
-
-100%
-
-The trained model correctly classifies all four XOR examples.
-
-Input
-
-Actual Class
-
-Predicted Class
-
-(0, 0)
-
-0
-
-0
-
-(0, 1)
-
-1
-
-1
-
-(1, 0)
-
-1
-
-1
-
-(1, 1)
-
-0
-
-0
-
-3. Linear Regression
-
-The final part focuses on training and evaluating a linear regression model using a numerical dataset sampled from a two-dimensional surface.
-
-The model is evaluated using 10-fold cross-validation to determine an appropriate learning rate. Different learning rates are tested, and their average mean squared errors are compared.
-
-Model Evaluation Results
-
-Metric
-
-Result
-
-Cross-validation folds
-
-10
-
-Learning rate search
-
-0.00 to 0.10
-
-Best learning rate
-
-0.02
-
-Cross-validation MSE
-
-1.3438
-
-Test MSE
-
-1.4459
-
-Cross-validation helps select a learning rate based on performance across different subsets of the training data, rather than relying on a single split.
-
-The final model is then evaluated on a separate test dataset to measure how well it generalizes to unseen examples.
-
-Technologies Used
-
-Python — Model implementations and numerical computation
-
-NumPy — Array operations and numerical calculations
-
-scikit-learn — Linear regression modelling and evaluation
-
-Matplotlib — Visualization of model performance
-
-Jupyter Notebook — Experimentation, analysis, and presentation of results
-
-The logistic regression component uses Python's built-in math library and does not rely on scikit-learn's logistic regression implementation.
-
+The logistic regression implementation uses Python's built-in `math` library without relying on prebuilt machine learning classifiers.
