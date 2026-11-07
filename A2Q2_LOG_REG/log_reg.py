@@ -137,23 +137,144 @@ def calculate_gradients(X, t, y_values):
 
     return gradients
 
-
 # --------------------------------------------------
 # 6. Train Logistic Regression Model
 # --------------------------------------------------
- 
- 
+
+def train(X, t, weights, learning_rate):
+    """
+    Train using batch gradient descent.
+
+    Update rule:
+    wj = wj - learning_rate * gradient_j
+    """
+
+    weights = weights.copy()
+    history = []
+
+    for iteration in range(1, max_iterations + 1):
+
+        # Step 1: Calculate z and y
+        z_values, y_values = predict(X, weights)
+
+        # Step 2: Calculate gradient for all weights
+        gradients = calculate_gradients(X, t, y_values)
+
+        # Step 3: Update weights simultaneously
+        for j in range(len(weights)):
+            weights[j] -= learning_rate * gradients[j]
+
+        # Step 4: Recalculate predictions after update
+        z_values, y_values = predict(X, weights)
+
+        # Step 5: Calculate cross-entropy loss
+        losses, avg_loss = cross_entropy(y_values, t)
+
+        # Record the results for this update
+        history.append({
+            "iteration": iteration,
+            "weights": weights.copy(),
+            "z": z_values,
+            "y": y_values,
+            "losses": losses,
+            "average_loss": avg_loss
+        })
+
+        # Stop when loss becomes sufficiently small
+        if avg_loss < loss_threshold:
+            break
+
+    return weights, history
+
+
 # --------------------------------------------------
 # 7. Display Last 10 Updates
 # --------------------------------------------------
 
+def display_last_updates(history):
+
+    print("\nLAST 10 WEIGHT UPDATES")
+    print("=" * 85)
+
+    for result in history[-10:]:
+
+        print(f"\nIteration: {result['iteration']}")
+
+        print(
+            f"{'Input':<12}"
+            f"{'z':<15}"
+            f"{'y':<15}"
+            f"{'Target':<10}"
+            f"{'Loss':<15}"
+        )
+
+        print("-" * 70)
+
+        for i in range(len(X)):
+
+            input_pair = (
+                f"({X[i][1]}, {X[i][2]})"
+            )
+
+            print(
+                f"{input_pair:<12}"
+                f"{result['z'][i]:<15.6f}"
+                f"{result['y'][i]:<15.6f}"
+                f"{t[i]:<10}"
+                f"{result['losses'][i]:<15.6f}"
+            )
+
+        print(
+            f"Average Loss: "
+            f"{result['average_loss']:.8f}"
+        )
 
 
 # --------------------------------------------------
 # 8. Evaluate Final Model
 # --------------------------------------------------
 
+def evaluate(X, t, weights):
 
+    z_values, y_values = predict(X, weights)
+
+    correct = 0
+
+    print("\nFINAL CLASSIFICATION RESULTS")
+    print("=" * 65)
+
+    print(
+        f"{'Input':<12}"
+        f"{'Target':<10}"
+        f"{'Probability':<15}"
+        f"{'Prediction':<12}"
+    )
+
+    print("-" * 65)
+
+    for i in range(len(X)):
+
+        predicted_class = (
+            1 if y_values[i] >= 0.5 else 0
+        )
+
+        if predicted_class == t[i]:
+            correct += 1
+
+        input_pair = f"({X[i][1]}, {X[i][2]})"
+
+        print(
+            f"{input_pair:<12}"
+            f"{t[i]:<10}"
+            f"{y_values[i]:<15.6f}"
+            f"{predicted_class:<12}"
+        )
+
+    accuracy = correct / len(X)
+
+    print(f"\nAccuracy: {accuracy * 100:.2f}%")
+
+    return accuracy
 
 # --------------------------------------------------
 # 9. Main Program
